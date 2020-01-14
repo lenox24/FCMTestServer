@@ -57,7 +57,7 @@ public class NotificationController {
         return new ResponseEntity<>("Push Notification ERROR!", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("token")
+    @PostMapping("/token")
     public ResponseEntity token(@RequestBody String token) {
         Token model = new Token(token);
         tokenRepo.insert(model);

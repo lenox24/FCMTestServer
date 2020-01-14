@@ -1,8 +1,9 @@
 package com.example.fcm.controller;
 
+import com.example.fcm.model.Token;
+import com.example.fcm.repo.TokenRepo;
 import com.example.fcm.service.AndroidPushNotificationsService;
 import com.example.fcm.service.AndroidPushPeriodicNotifications;
-import com.sun.org.apache.bcel.internal.generic.PUSH;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +11,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -21,9 +20,14 @@ import java.util.concurrent.ExecutionException;
 @RestController
 public class NotificationController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final TokenRepo tokenRepo;
 
     @Autowired
     AndroidPushNotificationsService androidPushNotificationsService;
+
+    public NotificationController(TokenRepo tokenRepo) {
+        this.tokenRepo = tokenRepo;
+    }
 
     @Scheduled(fixedRate = 10000)
     @GetMapping("/send")
@@ -51,6 +55,14 @@ public class NotificationController {
         }
 
         return new ResponseEntity<>("Push Notification ERROR!", HttpStatus.BAD_REQUEST);
+    }
+
+    @PostMapping("token")
+    public ResponseEntity token(@RequestBody String token) {
+        Token model = new Token(token);
+        tokenRepo.insert(model);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 }
 

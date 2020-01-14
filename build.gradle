@@ -19,6 +19,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'com.google.firebase:firebase-admin:6.5.0'
     implementation 'org.json:json:20160810'
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

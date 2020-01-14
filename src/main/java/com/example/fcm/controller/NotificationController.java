@@ -4,6 +4,7 @@ import com.example.fcm.model.Token;
 import com.example.fcm.repo.TokenRepo;
 import com.example.fcm.service.AndroidPushNotificationsService;
 import com.example.fcm.service.AndroidPushPeriodicNotifications;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,9 +58,9 @@ public class NotificationController {
         return new ResponseEntity<>("Push Notification ERROR!", HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("token")
-    public ResponseEntity token(@RequestBody String token) {
-        Token model = new Token(token);
+    @PostMapping("/token")
+    public ResponseEntity token(@RequestBody JSONObject reqJson) {
+        Token model = new Token(reqJson.get("token").toString());
         tokenRepo.insert(model);
 
         return new ResponseEntity(HttpStatus.OK);

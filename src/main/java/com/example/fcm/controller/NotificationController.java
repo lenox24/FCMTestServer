@@ -32,10 +32,14 @@ public class NotificationController {
     }
 
     @Scheduled(fixedRate = 10000)
-    @GetMapping("/send")
+    @PostMapping("/send")
     @ResponseBody
-    public ResponseEntity<String> send(@RequestBody String type) {
-        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenRepo.findByType(type));
+    public ResponseEntity<String> send(@RequestBody JSONObject reqJson) {
+        String type = reqJson.get("type").toString();
+        String title = reqJson.get("title").toString();
+        String body = reqJson.get("body").toString();
+
+        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenRepo.findByType(type), title, body);
 
         HttpEntity<String> request = new HttpEntity<>(notifications);
 

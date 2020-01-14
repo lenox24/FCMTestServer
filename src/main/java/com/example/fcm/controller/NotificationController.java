@@ -59,7 +59,6 @@ public class NotificationController {
     }
 
     @PostMapping("/token")
-
     public ResponseEntity token(@RequestBody JSONObject reqJson) {
         Token model = new Token(reqJson.get("token").toString());
         tokenRepo.insert(model);

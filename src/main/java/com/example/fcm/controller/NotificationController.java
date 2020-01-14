@@ -4,7 +4,7 @@ import com.example.fcm.model.Token;
 import com.example.fcm.repo.TokenRepo;
 import com.example.fcm.service.AndroidPushNotificationsService;
 import com.example.fcm.service.AndroidPushPeriodicNotifications;
-import org.json.JSONObject;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +17,25 @@ import org.springframework.web.bind.annotation.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-
+@CrossOrigin
 @RestController
+@RequestMapping("api/a")
 public class NotificationController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     private final TokenRepo tokenRepo;
 
-    @Autowired
-    AndroidPushNotificationsService androidPushNotificationsService;
+    final AndroidPushNotificationsService androidPushNotificationsService;
 
-    public NotificationController(TokenRepo tokenRepo) {
+    public NotificationController(TokenRepo tokenRepo, AndroidPushNotificationsService androidPushNotificationsService) {
         this.tokenRepo = tokenRepo;
+        this.androidPushNotificationsService = androidPushNotificationsService;
     }
 
     @Scheduled(fixedRate = 10000)
     @GetMapping("/send")
     @ResponseBody
-    public ResponseEntity<String> send() {
-        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson();
+    public ResponseEntity<String> send(@RequestBody String type) {
+        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenRepo.findByType(type));
 
         HttpEntity<String> request = new HttpEntity<>(notifications);
 
@@ -59,8 +60,12 @@ public class NotificationController {
     }
 
     @PostMapping("/token")
+    @ResponseBody
     public ResponseEntity token(@RequestBody JSONObject reqJson) {
-        Token model = new Token(reqJson.get("token").toString());
+        String token = reqJson.get("token").toString();
+        String type = reqJson.get("type").toString();
+        Token model = new Token();
+        model.setToken(token, type);
         tokenRepo.insert(model);
 
         return new ResponseEntity(HttpStatus.OK);

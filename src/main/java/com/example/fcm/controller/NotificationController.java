@@ -66,7 +66,7 @@ public class NotificationController {
             return new ResponseEntity("already exist", HttpStatus.BAD_REQUEST);
         }
 
-        return new ResponseEntity("100", HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/send/token")

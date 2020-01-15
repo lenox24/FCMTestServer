@@ -4,6 +4,7 @@ import com.example.fcm.model.Token;
 import com.example.fcm.repo.TokenRepo;
 import com.example.fcm.service.AndroidPushNotificationsService;
 import com.example.fcm.service.AndroidPushPeriodicNotifications;
+import jdk.internal.jline.internal.Log;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,7 @@ public class NotificationController {
     @PostMapping("/update/agree")
     @ResponseBody
     public ResponseEntity updateAgree(@RequestBody JSONObject reqJson) {
+        Log.debug(reqJson.toString());
         Token model = tokenRepo.findByToken(reqJson.get("token").toString());
         if (model == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -79,6 +81,7 @@ public class NotificationController {
     @PostMapping("/send/token")
     @ResponseBody
     public ResponseEntity sendToken(@RequestBody JSONObject reqJson) {
+        Log.debug(reqJson.toString());
         String token = reqJson.get("token").toString();
         String type = reqJson.get("type").toString();
         String agree = reqJson.get("agree").toString();

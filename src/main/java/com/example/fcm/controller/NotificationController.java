@@ -4,7 +4,6 @@ import com.example.fcm.model.Token;
 import com.example.fcm.repo.TokenRepo;
 import com.example.fcm.service.AndroidPushNotificationsService;
 import com.example.fcm.service.AndroidPushPeriodicNotifications;
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,11 +34,10 @@ public class NotificationController {
     @PostMapping("/notification")
     @ResponseBody
     public ResponseEntity<String> notificationAll(@RequestBody JSONObject reqJson) {
-        Boolean agree = (Boolean) reqJson.get("agree");
         String title = reqJson.get("title").toString();
         String body = reqJson.get("body").toString();
 
-        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenRepo.findByAgree(agree), title, body);
+        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenRepo.findByAgree("true"), title, body);
 
         HttpEntity<String> request = new HttpEntity<>(notifications);
 
@@ -61,12 +59,22 @@ public class NotificationController {
         return sending(request);
     }
 
-    @PostMapping("/token")
+    @PostMapping("/search/token")
     @ResponseBody
-    public ResponseEntity token(@RequestBody JSONObject reqJson) {
+    public ResponseEntity searchToken(@RequestBody String token) {
+        if (tokenRepo.findByToken(token) != null) {
+            return new ResponseEntity("already exist", HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity("100", HttpStatus.OK);
+    }
+
+    @PostMapping("/send/token")
+    @ResponseBody
+    public ResponseEntity sendToken(@RequestBody JSONObject reqJson) {
         String token = reqJson.get("token").toString();
         String type = reqJson.get("type").toString();
-        Boolean agree = (Boolean) reqJson.get("agree");
+        String agree = reqJson.get("agree").toString();
 
         Token model = new Token();
         model.setToken(token, type, agree);

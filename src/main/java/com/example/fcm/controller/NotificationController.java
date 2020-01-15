@@ -37,7 +37,7 @@ public class NotificationController {
     @PostMapping("/update/agree")
     @ResponseBody
     public ResponseEntity updateAgree(@RequestBody JSONObject reqJson) {
-        Log.debug(reqJson.toString());
+        System.out.println(reqJson.toString());
         Token model = tokenRepo.findByToken(reqJson.get("token").toString());
         if (model == null) {
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
@@ -81,7 +81,7 @@ public class NotificationController {
     @PostMapping("/send/token")
     @ResponseBody
     public ResponseEntity sendToken(@RequestBody JSONObject reqJson) {
-        Log.debug(reqJson.toString());
+        System.out.println(reqJson.toString());
         String token = reqJson.get("token").toString();
         String type = reqJson.get("type").toString();
         String agree = reqJson.get("agree").toString();

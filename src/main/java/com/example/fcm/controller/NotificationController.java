@@ -4,6 +4,7 @@ import com.example.fcm.model.Token;
 import com.example.fcm.repo.TokenRepo;
 import com.example.fcm.service.AndroidPushNotificationsService;
 import com.example.fcm.service.AndroidPushPeriodicNotifications;
+import com.google.gson.JsonObject;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class NotificationController {
 
     @PostMapping("/update/agree")
     @ResponseBody
-    public ResponseEntity updateAgree(@RequestBody JSONObject reqJson) {
+    public ResponseEntity updateAgree(@RequestBody JsonObject reqJson) {
         System.out.println(reqJson.toString());
         Token model = tokenRepo.findByToken(reqJson.get("token").toString());
         if (model == null) {
@@ -48,7 +49,7 @@ public class NotificationController {
     @Scheduled(fixedRate = 10000)
     @PostMapping("/notification")
     @ResponseBody
-    public ResponseEntity<String> notificationAll(@RequestBody JSONObject reqJson) {
+    public ResponseEntity<String> notificationAll(@RequestBody JsonObject reqJson) {
         String title = reqJson.get("title").toString();
         String body = reqJson.get("body").toString();
 
@@ -62,12 +63,12 @@ public class NotificationController {
     @Scheduled(fixedRate = 10000)
     @PostMapping("/notification/type")
     @ResponseBody
-    public ResponseEntity<String> notificationType(@RequestBody JSONObject reqJson) {
+    public ResponseEntity<String> notificationType(@RequestBody JsonObject reqJson) {
         String type = reqJson.get("type").toString();
         String title = reqJson.get("title").toString();
         String body = reqJson.get("body").toString();
 
-        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenRepo.findByType(type), title, body);
+        String notifications = AndroidPushPeriodicNotifications.PeriodicNotificationJson(tokenRepo.findByTypeAndAgree(type, "true"), title, body);
 
         HttpEntity<String> request = new HttpEntity<>(notifications);
 
@@ -76,7 +77,7 @@ public class NotificationController {
 
     @PostMapping("/send/token")
     @ResponseBody
-    public ResponseEntity sendToken(@RequestBody JSONObject reqJson) {
+    public ResponseEntity sendToken(@RequestBody JsonObject reqJson) {
         System.out.println(reqJson.toString());
         String token = reqJson.get("token").toString();
         String type = reqJson.get("type").toString();

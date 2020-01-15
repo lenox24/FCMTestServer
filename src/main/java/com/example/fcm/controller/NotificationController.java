@@ -42,7 +42,7 @@ public class NotificationController {
         }
 
         model.setAgree(reqJson.get("agree").toString());
-        tokenRepo.insert(model);
+        tokenRepo.save(model);
 
         return new ResponseEntity(HttpStatus.OK);
     }

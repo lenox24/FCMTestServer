@@ -1,17 +1,27 @@
 package com.example.fcm.model;
 
+import com.google.gson.annotations.SerializedName;
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
 public class Token {
     @Id
+    ObjectId _id;
+
+    @SerializedName("token")
     private String token;
 
+    @SerializedName("type")
     private String type = "android";
+
+    @SerializedName("agree")
     private String agree;
 
     public Token() {
+        this._id = null;
         this.token = null;
+        this.type = null;
+        this.agree = null;
     }
 
     public void setToken(String token, String type, String agree) {

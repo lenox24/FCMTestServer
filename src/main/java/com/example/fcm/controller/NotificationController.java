@@ -7,6 +7,9 @@ import com.example.fcm.service.AndroidPushPeriodicNotifications;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +31,20 @@ public class NotificationController {
     public NotificationController(TokenRepo tokenRepo, AndroidPushNotificationsService androidPushNotificationsService) {
         this.tokenRepo = tokenRepo;
         this.androidPushNotificationsService = androidPushNotificationsService;
+    }
+
+    @PostMapping("/update/agree")
+    @ResponseBody
+    public ResponseEntity updateAgree(@RequestBody JSONObject reqJson) {
+        Token model = tokenRepo.findByToken(reqJson.get("token").toString());
+        if (model == null) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
+        model.setAgree(reqJson.get("agree").toString());
+        tokenRepo.insert(model);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @Scheduled(fixedRate = 10000)
@@ -57,16 +74,6 @@ public class NotificationController {
         HttpEntity<String> request = new HttpEntity<>(notifications);
 
         return sending(request);
-    }
-
-    @PostMapping("/search/token")
-    @ResponseBody
-    public ResponseEntity searchToken(@RequestBody String token) {
-        if (tokenRepo.findByToken(token) != null) {
-            return new ResponseEntity("already exist", HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/send/token")

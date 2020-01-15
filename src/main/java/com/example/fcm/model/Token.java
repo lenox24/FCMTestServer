@@ -34,6 +34,18 @@ public class Token {
         return token;
     }
 
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getAgree() {
+        return agree;
+    }
+
     public void setAgree(String agree) {
         this.agree = agree;
     }

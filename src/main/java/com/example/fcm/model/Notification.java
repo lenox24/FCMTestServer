@@ -12,6 +12,12 @@ public class Notification {
     @SerializedName("type")
     String type;
 
+    public Notification() {
+        this.title = null;
+        this.body = null;
+        this.type = null;
+    }
+
     public Notification(String title, String body, String type) {
         this.title = title;
         this.body = body;
